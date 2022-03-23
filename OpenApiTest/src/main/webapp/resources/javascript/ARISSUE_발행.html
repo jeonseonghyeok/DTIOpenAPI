@@ -1,0 +1,1004 @@
+<HTML>
+<HEAD>
+<TITLE>매출 발행</TITLE>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<script type="text/javascript"
+	src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+</HEAD>
+<body>
+	<h1>세금계산서 작성 OPEN API활용</h1>
+	<table border='1' style='min-width: 700px;'>
+
+		<thead>
+			<tr>
+				<th>일자 : <input type='date' id='DTI_WDATE' class='data_main'
+					value=''>
+				</th>
+				<th>공급자</th>
+				<th>데모 : <input type="radio" name="SERVER_TYPE" value="demo"
+					checked="true"> 운영 : <input type="radio" name="SERVER_TYPE"
+					value="">
+				</th>
+				<th>공급받는자</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>사업자번호</td>
+				<td><input id='SUP_COM_REGNO' class='data_main'
+					content='required' maxlength='10' value='5460410824'></td>
+				<td>사업자번호</td>
+				<td><input id='BYR_COM_REGNO' class='data_main'
+					content='required' maxlength='10' value='1231212300'></td>
+			</tr>
+			<!--
+			<tr>
+				<td>스마트빌 아이디</td>
+				<td><input id='SUP_COM_ID' class='data_main' maxlength='12' value='jukury1'></td>
+				<td>스마트빌 아이디</td>
+				<td><input id='BYR_COM_ID' class='data_main' maxlength='12' value='jshtest'></td>
+			</tr>
+			-->
+			<tr>
+				<td>대표자명</td>
+				<td><input id='SUP_REP_NAME' class='data_main' maxlength='30'
+					value='공급사대표'></td>
+				<td>대표자명</td>
+				<td><input id='BYR_REP_NAME' class='data_main' maxlength='30'
+					value='공받사대표'></td>
+			</tr>
+			<tr>
+				<td>회사명</td>
+				<td><input id='SUP_COM_NAME' class='data_main' maxlength='70'
+					value='공급사'></td>
+				<td>회사명</td>
+				<td><input id='BYR_COM_NAME' class='data_main' maxlength='70'
+					value='공받자'></td>
+			</tr>
+			<tr>
+				<td>주소</td>
+				<td><input id='SUP_COM_ADDR' class='data_main' maxlength='150'
+					value='공급사 주소'></td>
+				<td>주소</td>
+				<td><input id='BYR_COM_ADDR' class='data_main' maxlength='150'
+					value='공받사 주소'></td>
+			</tr>
+			
+			<tr>
+				<td>부서 이름</td>
+				<td><input id='SUP_DEPT_NAME' class='data_main' maxlength='70'
+					value='오픈부서'></td>
+				<td>부서 이름</td>
+				<td><input id='BYR_DEP_NAME' class='data_main' maxlength='70'
+					value='매입부서'></td>
+			</tr>
+			<tr>
+				<td>담당자 이름</td>
+				<td><input id='SUP_MNG_NAME' class='data_main' maxlength='70'
+					value='공급담당자'></td>
+				<td>담당자 이름</td>
+				<td><input id='BYR_MNG_NAME' class='data_main' maxlength='70'
+					value='매입담당자'></td>
+			</tr>
+			<tr>
+				<td>담당자 번호</td>
+				<td><input id='SUP_MNG_TEL' class='data_main' maxlength='70'
+					value='010-2628-9745'></td>
+				<td>담당자 번호</td>
+				<td><input id='BYR_MNG_TEL' class='data_main' maxlength='70'
+					value='02-559-0826'></td>
+			</tr>
+			<tr>
+				<td>이메일 주소</td>
+				<td><input id='SUP_EMAIL' class='data_main' maxlength='40'
+					value='공급자 이메일'></td>
+				<td>이메일 주소</td>
+				<td><input id='BYR_EMAIL' class='data_main' content='required'
+					maxlength='40' value='jukury@businesson.co.kr'></td>
+			</tr>
+
+		</tbody>
+	</table>
+	<table border='1'>
+		<thead>
+			<tr>
+				<th colspan=9>품목 내역
+					<button onClick='addItem()' style="float: right;">+</button>
+				</th>
+			</tr>
+			<tr>
+				<th colspan=3>과세 <input type="radio" name="DTI_TYPE"
+					value="0101" checked="true"> 영세 <input type="radio"
+					name="DTI_TYPE" value="0102"> 면세 <input type="radio"
+					name="DTI_TYPE" value="0301">
+				</th>
+				<th colspan=2>
+					<!--
+				거래명세서 포함  <input id="DTT_YN" type="checkbox">
+				-->
+				</th>
+				<th colspan=2>스</th>
+				<th colspan=2>총액 : <input id="TOTAL_AMOUNT" class="data_main"
+					value='0' type='text' disabled>
+				</th>
+			</tr>
+			<tr>
+				<th></th>
+				<th>품목코드</th>
+				<th>품목명</th>
+				<th>규격</th>
+				<th>구입일자</th>
+				<th>단가</th>
+				<th>수량</th>
+				<th>공급가액</th>
+				<th>세액</th>
+			</tr>
+		</thead>
+		<tbody id='item_body'>
+			<tr id='sum_amount'>
+				<td colspan=7></td>
+				<td colspan=2><input id="SUP_AMOUNT" class="data_main"
+					value='0' type='text' disabled> <input id="TAX_AMOUNT"
+					class="data_main" value='0' type='text' disabled></td>
+			</tr>
+		</tbody>
+	</table>
+	<!--
+	<button onClick='postWrite()'>
+		작성
+	</button>
+	<BR>
+	<BR>
+	<input id='BATCH_ID' class='data_main'>
+	<button onClick='printDti()'>
+		조회
+	</button>
+	<button onClick='printDtt()'>
+		거래명세서 조회
+	</button>
+	<BR>
+	<button id='arIssue' onClick='arIssue()'>
+		발행
+	</button>
+	<button onClick='cancle()'>
+		발행취소
+	</button>
+	-->
+	인증토큰 :
+	<input type="text" style="width: 600px" id="AUTH_TICKET" size="50"
+		value="QXN3K05KZ2ZCQVlxeC9ULzRpY3RwSHZsYW1BRUltWUxjZ3ZLeXQ3MTlIOD0K">
+	<br> CONVERSATION 일련번호 :
+	<input type="text" id="con_seq" size="4" value="0001">
+	<br> ISSUE 일련번호 :
+	<input type="text" id="issue_seq" size="5" value="00001">
+	<br>
+	<!--알파벳 가능-->
+	업체코드 :
+	<input type="text" id="com_link_code" size="3" value="uof">
+	<br>
+	<table>
+		<tr>
+			<td><input type="button" value="발행" onClick="ARISSUE()"></td>
+			<td><input type="button" value="미발행건 조회"
+				onClick="lookup_arissue()"></td>
+			<td><input id="ARAP_REPO_btn" type="button" value="조회"></td>
+			<td><input type="button" value="미리보기" onClick="dti_preview()"></td>
+		</tr>
+	</table>
+	<div id="VIEW"></div>
+	<script language="javascript">
+		function lowSelect(e){
+		 //console.log( $(e).attr('class'));
+		 [].forEach.call($(e).children(), function(element, index, array){ 
+			console.log(element.className+", "+element.children[0].value);
+		 });
+		}
+		
+		function lookup_arissue(){
+			var url = "http://"
+			if("demo" == $(':radio[name="SERVER_TYPE"]').filter(':checked').val())
+				url += "demo";
+			else 
+				url += "www";
+			url += ".smartbill.co.kr/xMain/openapi/wtdoc_lst.aspx?AUTH_TICKET="+$('#AUTH_TICKET').val();//+"&CONVERSATION_ID=54604108241231212312202004010030006";
+			window.open(url);
+		}
+		$('#ARAP_REPO_btn').click(function(){
+			var _today = new Date();
+			var now = _today.format("YYYYMMDDhhmmss");
+			
+			var request = JSON.stringify({
+				'MessageId': '3267cab1-3ea6-4aa6-b988-7d27d6d5ac89',
+				'Signal': 'ARAP_REPO',
+				'RequestTime': now,
+				'SendComRegno': $('#SUP_COM_REGNO').val(),
+				'AuthToken': $("#AUTH_TICKET").val(),
+				'ServiceCode': 'DTI',
+				'SearchFromDate': '2020-04-03',
+				'SearchToDate': '2020-04-03',
+				'SearchComRegno': $('#BYR_COM_REGNO').val(),
+				'RepoTypeCode': 'AP'
+			});
+				$.support.cors = true;
+				$.ajax({
+				 type: "POST",
+				 dataType: "json",
+				 crossDomain: true,
+				 contentType: "application/json",
+				 url: "http://demoapi.smartbill.co.kr/sb-api/request/",
+				 data: request,
+				 success: function (data) {
+				 console.log(data); //data 처리(하단의 Response Sample 참조)
+				 },
+				 error: function (error) {
+				 //error 처리
+				 }
+				});
+		
+		});
+		function ARISSUE(){ //매출 발행
+			
+			var _today = new Date();
+			var now = _today.format("YYYYMMDDhhmmss");
+			//console.log(_today.format('YYYYMMDDhhmmss'));
+			var DTI_WDATE = $("#DTI_WDATE").val().split("-").join("");//기입된 작성일자(YYYYMMdd)
+			var sbcode = "41000008";
+			var ISSUEID = DTI_WDATE+sbcode+$('#com_link_code').val()+$('#issue_seq').val();
+			var dtixml = "";
+			
+			var SUP_COM_REGNO = $('#SUP_COM_REGNO').val();
+			var BYR_COM_REGNO = $('#BYR_COM_REGNO').val();
+			
+			var dtixml=''
+			+ '<?xml version="1.0" encoding="UTF-8"?>'
+			+ '<TaxInvoice xsi:schemaLocation="urn:kr:or:kec:standard:Tax:ReusableAggregateBusinessInformationEntitySchemaModule:1:0 http://www.kec.or.kr/standard/Tax/TaxInvoiceSchemaModule_1.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:kr:or:kec:standard:Tax:ReusableAggregateBusinessInformationEntitySchemaModule:1:0">'
+			+ '<ExchangedDocument>'
+			+ '<IssueDateTime>'//발행일(현재시각/YYYYMMDDhhmmss)
+			+ now
+			+ '</IssueDateTime>'
+			
+			//+'<ReferencedDocument>'
+			//+'<ID>2006300340 </ID>'
+			//+'</ReferencedDocument>'
+			
+			+ '</ExchangedDocument>'
+			
+			
+			
+			+ '<TaxInvoiceDocument>'
+			+ '<IssueID>'
+			+ ISSUEID
+			+ '</IssueID>'
+			//console.log(dtixml)
+			
+			+ '<TypeCode>'
+			+ $(':radio[name="DTI_TYPE"]').filter(':checked').val()
+			+ '</TypeCode>'
+			+ '<DescriptionText/>'
+			+ '<IssueDateTime>'
+			+ DTI_WDATE
+			+ '</IssueDateTime>'
+			+ '<PurposeCode>'
+			+ '02'
+			+ '</PurposeCode>'
+			+ '</TaxInvoiceDocument>'
+			
+			+ '<TaxInvoiceTradeSettlement>'
+			+ '<InvoicerParty>'
+			+ '<ID>'
+			+ SUP_COM_REGNO
+			+ '</ID>'
+			+ '<TypeCode>'
+			+ ''//업태
+			+ '</TypeCode>'
+			+ '<NameText>'
+			+ $('#SUP_COM_NAME').val() //공급자 상호명
+			+ '</NameText>'
+			+ '<ClassificationCode>'
+			+ ''//종목
+			+ '</ClassificationCode>'
+			
+			+ '<SpecifiedOrganization>'
+				+ '<TaxRegistrationID>'
+					+ '1010'//종사업장코드
+				+ '</TaxRegistrationID>'
+			+ '</SpecifiedOrganization>'
+			
+			+ '<SpecifiedPerson>'
+			+ '<NameText>'
+			+ $('#SUP_REP_NAME').val()//대표자 성명
+			+ '</NameText>'
+			+ '</SpecifiedPerson>'
+			+ '<DefinedContact>'
+			+ '<DepartmentNameText>'
+			+ $('#SUP_DEPT_NAME').val()//부서
+			+ '</DepartmentNameText>'
+			+ '<PersonNameText>'
+			+ $('#SUP_MNG_NAME').val()//공급자 성명
+			+ '</PersonNameText>'
+			+ '<TelephoneCommunication>'
+			+ $('#SUP_MNG_TEL').val()//공급자 번호
+			+ '</TelephoneCommunication>'
+			+ '<URICommunication>'
+			+ $('#SUP_EMAIL').val()//공급자 이메일
+			+ '</URICommunication>'
+			+ '</DefinedContact>'
+			+ '<SpecifiedAddress>'
+			+ '<LineOneText>'
+			+ $('#SUP_COM_ADDR').val()//공급자 사업장 주소
+			+ '</LineOneText>'
+			+ '</SpecifiedAddress>'
+			+ '</InvoicerParty>'
+			
+			+ '<InvoiceeParty>'
+			+ '<ID>'
+			+ BYR_COM_REGNO
+			+ '</ID>'
+			+ '<TypeCode>'
+			+ ''//업태
+			+ '</TypeCode>'
+			+ '<NameText>'
+			+ $('#BYR_COM_NAME').val()//공급받는자 상호명
+			+ '</NameText>'
+			+ '<ClassificationCode>'
+			+ ''//공급받는자 종목
+			+ '</ClassificationCode>'
+			+ '<SpecifiedOrganization>'
+			+ '<BusinessTypeCode>'
+			+ '01'
+			+ '</BusinessTypeCode>'
+			+ '</SpecifiedOrganization>'
+			+ '<SpecifiedPerson>'
+			+ '<NameText>'
+			+ $('#BYR_REP_NAME').val()//공급받는자 대표자 성명
+			+ '</NameText>'
+			+ '</SpecifiedPerson>'
+			
+			+ '<PrimaryDefinedContact>'//공급받는자 1
+			+ '<DepartmentNameText/>'//담당부서
+			+ '<PersonNameText>'
+			+ '공받자'//공급받는자 성명
+			+ '</PersonNameText>'
+			+ '<TelephoneCommunication>'
+			+ '02-519-3130'//공급받는자 번호
+			+ '</TelephoneCommunication>'
+			+ '<URICommunication>'
+			//+ 'test@nate.com'
+			+ $('#BYR_EMAIL').val()//공급받는자 이메일
+			+ '</URICommunication>'
+			+ '</PrimaryDefinedContact>'
+			
+			/*
+			+ '<SecondaryDefinedContact>'//공급받는자 2
+			+ '<DepartmentNameText/>'
+			+ '<PersonNameText>'
+			+ '공받자2'//공급받는자 성명
+			+ '</PersonNameText>'
+			+ '<TelephoneCommunication>'
+			+ '02-559-0826'//공급받는자 번호
+			+ '</TelephoneCommunication>'
+			+ '<URICommunication>'
+			//+ 'Secondary@test.com'//공급받는자 이메일
+			+ 'jukury@naver.com'//공급받는자 이메일
+			//+ $('#BYR_EMAIL').val()//공급받는자 이메일
+			+ '</URICommunication>'
+			+ '</SecondaryDefinedContact>'
+			*/
+			
+			+ '<SpecifiedAddress>'
+			+ '<LineOneText>'
+			+ $('#BYR_COM_ADDR').val()//공급받는자 사업장 주소
+			+ '</LineOneText>'
+			+ '</SpecifiedAddress>'
+			+ '</InvoiceeParty>'
+			
+			+ '<SpecifiedPaymentMeans>'
+			+ 	'<TypeCode>'
+			+ 		'10'//현금
+			+ 	'</TypeCode>'
+			+ 	'<PaidAmount>'
+			+ 		$("#TOTAL_AMOUNT").val()
+			+ 	'</PaidAmount>'
+			+ '</SpecifiedPaymentMeans>'
+			+ '<SpecifiedPaymentMeans>'
+			+ 	'<TypeCode>'
+			+ 		'20'//수표
+			+ 	'</TypeCode>'
+			+ 	'<PaidAmount>'
+			+ 		'0'
+			+ 	'</PaidAmount>'
+			+ '</SpecifiedPaymentMeans>'
+			+ '<SpecifiedPaymentMeans>'
+			+ 	'<TypeCode>'
+			+ 		'30'//어음
+			+ 	'</TypeCode>'
+			+ 	'<PaidAmount>'
+			+ 		'0'
+			+ 	'</PaidAmount>'
+			+ '</SpecifiedPaymentMeans>'
+			+ '<SpecifiedPaymentMeans>'
+			+ 	'<TypeCode>'
+			+ 		'40'//외상미수금
+			+ 	'</TypeCode>'
+			+ 	'<PaidAmount>'
+			+ 		'0'
+			+ 	'</PaidAmount>'
+			+ '</SpecifiedPaymentMeans>'		
+			+ '<SpecifiedMonetarySummation>'
+			+ '<ChargeTotalAmount>'
+			+ $("#SUP_AMOUNT").val()
+			+ '</ChargeTotalAmount>'
+			+ '<TaxTotalAmount>'
+			+ $("#TAX_AMOUNT").val()
+			+ '</TaxTotalAmount>'
+			+ '<GrandTotalAmount>'
+			+ $("#TOTAL_AMOUNT").val()
+			+ '</GrandTotalAmount>'
+			+ '</SpecifiedMonetarySummation>'
+			+ '</TaxInvoiceTradeSettlement>';
+			
+			$('.data_item').each(function(index){
+				dtixml += ''
+				+ '<TaxInvoiceTradeLineItem>'
+				+ 	'<SequenceNumeric>'	//일련번호
+				+ 		(index+1)
+				+ 	'</SequenceNumeric>'
+				+ 	'<DescriptionText>'	//비고
+				+ 		$(this).find(".ITEM_CODE input").val()
+				+ 	'</DescriptionText>'
+				+ 	'<InvoiceAmount>'	//아이템 공급가액
+				+ 		$(this).find(".SUP_AMOUNT input").val()
+				+ 	'</InvoiceAmount>'
+				+ 	'<ChargeableUnitQuantity>'//아이템 갯수
+				+ 		$(this).find(".ITEM_QTY input").val()
+				+ 	'</ChargeableUnitQuantity>'
+				+ 	'<InformationText>'
+				+ 		$(this).find(".ITEM_SIZE input").val()
+				+ 	'</InformationText>'
+				+ 	'<NameText>'
+				+ 		$(this).find(".ITEM_NAME input").val()
+				+ 	'</NameText>'
+				+ 	'<PurchaseExpiryDateTime>'
+				+ 		$(this).find(".ITEM_MD input").val().split("-").join("")
+				+ 	'</PurchaseExpiryDateTime>'
+				+ 	'<TotalTax>'
+				+ 		'<CalculatedAmount>'
+				+ 			$(this).find(".TAX_AMOUNT input").val()
+				+ 		'</CalculatedAmount>'
+				+ 	'</TotalTax>'
+				+ 	'<UnitPrice>'
+				+ 	'<UnitAmount>'
+				+ 		$(this).find(".UNIT_PRICE input").val()
+				+ 	'</UnitAmount>'
+				+ 	'</UnitPrice>'
+				+ '</TaxInvoiceTradeLineItem>';
+			})
+				dtixml += '</TaxInvoice>'
+				//임의로 수정
+				//dtixml = '<?xml version="1.0" encoding="UTF-8"?><TaxInvoice xmlns="urn:kr:or:kec:standard:Tax:ReusableAggregateBusinessInformationEntitySchemaModule:1:0" xsi:schemaLocation="urn:kr:or:kec:standard:Tax:ReusableAggregateBusinessInformationEntitySchemaModule:1:0 http://www.kec.or.kr/standard/Tax/TaxInvoiceSchemaModule_1.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">	<ExchangedDocument>		<IssueDateTime>20210806174517</IssueDateTime>		<ReferencedDocument>			<ID>TX000155</ID>		</ReferencedDocument>	</ExchangedDocument>	<TaxInvoiceDocument>		<IssueID>2021073141000008ftq00009</IssueID>		<TypeCode>0101</TypeCode>		<DescriptionText/>		<IssueDateTime>20210731</IssueDateTime>		<PurposeCode>02</PurposeCode>	</TaxInvoiceDocument>	<TaxInvoiceTradeSettlement>		<InvoicerParty>			<ID>1358632758</ID>			<TypeCode>제조,도소매업</TypeCode>			<NameText>				<![CDATA[솔루션코리아컴퍼니(주)]]></NameText>			<ClassificationCode>전자부품가공,전자부품</ClassificationCode>			<SpecifiedPerson>				<NameText>김민선</NameText>			</SpecifiedPerson>			<DefinedContact>				<DepartmentNameText>경영지원</DepartmentNameText>				<PersonNameText>안순이</PersonNameText>				<TelephoneCommunication>010-3003-2755</TelephoneCommunication>				<URICommunication>point0761@solution-korea.com</URICommunication>			</DefinedContact>			<SpecifiedAddress>				<LineOneText>					<![CDATA[경기도 화성시 동탄대로21길 10 ,303-1호(영천동,더퍼스트타워) ]]></LineOneText>			</SpecifiedAddress>		</InvoicerParty>		<InvoiceeParty>			<ID>5798601187</ID>			<TypeCode>기타</TypeCode>			<NameText>				<![CDATA[주식회사 창성아이텍]]></NameText>			<ClassificationCode>기타</ClassificationCode>			<SpecifiedOrganization>				<BusinessTypeCode>01</BusinessTypeCode>			</SpecifiedOrganization>			<SpecifiedPerson>				<NameText>이동주</NameText>			</SpecifiedPerson>			<PrimaryDefinedContact>				<DepartmentNameText/>				<PersonNameText>					<![CDATA[이동주대표]]></PersonNameText>				<TelephoneCommunication/>				<URICommunication>dongjoo@csitek.co.kr</URICommunication>			</PrimaryDefinedContact>			<SpecifiedAddress>				<LineOneText>					<![CDATA[서울특별시 구로구 경인로53가길 10, 11층 1115호(구로동,구로대명벨리온지식산업센터) ]]></LineOneText>			</SpecifiedAddress>		</InvoiceeParty>		<SpecifiedMonetarySummation>			<ChargeTotalAmount>25604606</ChargeTotalAmount>			<TaxTotalAmount>2560462</TaxTotalAmount>			<GrandTotalAmount>28165068</GrandTotalAmount>		</SpecifiedMonetarySummation>	</TaxInvoiceTradeSettlement>	<TaxInvoiceTradeLineItem>		<SequenceNumeric>1</SequenceNumeric>		<DescriptionText>			<![CDATA[2021/07/01 출하완료]]></DescriptionText>		<InvoiceAmount>12700481</InvoiceAmount>		<ChargeableUnitQuantity>30000.00</ChargeableUnitQuantity>		<InformationText>			<![CDATA[PCB, Elecgasmeter_800cc – MANKUN FR-4, 2L, 1.6T, 82.2*41.5]]></InformationText>		<NameText>			<![CDATA[Elecgasmeter_800cc]]></NameText>		<PurchaseExpiryDateTime>20210731</PurchaseExpiryDateTime>		<TotalTax>			<CalculatedAmount>1270049</CalculatedAmount>		</TotalTax>		<UnitPrice>			<UnitAmount>0.37</UnitAmount>		</UnitPrice>	</TaxInvoiceTradeLineItem>	<TaxInvoiceTradeLineItem>		<SequenceNumeric>2</SequenceNumeric>		<DescriptionText>			<![CDATA[2021/07/28 출하완료]]></DescriptionText>		<InvoiceAmount>12904125</InvoiceAmount>		<ChargeableUnitQuantity>30477.00</ChargeableUnitQuantity>		<InformationText>			<![CDATA[PCB, Elecgasmeter_800cc – MANKUN FR-4, 2L, 1.6T, 82.2*41.5]]></InformationText>		<NameText>			<![CDATA[Elecgasmeter_800cc]]></NameText>		<PurchaseExpiryDateTime>20210731</PurchaseExpiryDateTime>		<TotalTax>			<CalculatedAmount>1290413</CalculatedAmount>		</TotalTax>		<UnitPrice>			<UnitAmount>0.37</UnitAmount>		</UnitPrice>	</TaxInvoiceTradeLineItem></TaxInvoice>';
+			var conversationId = SUP_COM_REGNO+BYR_COM_REGNO+DTI_WDATE+$('#con_seq').val()+"006";
+			var request = JSON.stringify({ 
+				//'MessageId': $("#messageId").val(), 
+				'MessageId': 'aehoafndlaohelapehpf217301709spjp',
+				'Signal': 'ARISSUE', //고정
+				//'RequestTime': $("#requestTime").val(), 
+				'RequestTime': now,
+				//'SendComRegno': $("#sendComRegno").val(), 
+				'SendComRegno': SUP_COM_REGNO,
+				'ReceiveComRegno': BYR_COM_REGNO,
+				'AuthToken': $("#AUTH_TICKET").val(), 
+				//'AuthToken': 'QXN3K05KZ2ZCQVlxeC9ULzRpY3RwTDJZYlVPTWhDTHlRNENOL1laUXRNMD0K',
+				'SystemType': 'OAPI',
+				'ServiceCode': 'DTI',
+				'ConversationId': [conversationId],//참조번호
+				'SMTPEmail':'',
+				'RValue':'',
+				'CertPassword':'6tVnMtI7GhHX4P9scDgmhw==',
+				'SignedXML':dtixml,
+				'SystemId':'',
+				'PlatformCode':'',
+			}); 
+			
+			$.support.cors = true;
+		
+			$.ajax({ 
+				type: "POST",
+				dataType: "json", 
+				crossDomain: true,
+				contentType: "application/json",
+				url: "http://"+$(':radio[name="SERVER_TYPE"]').filter(':checked').val()+"api.smartbill.co.kr/sb-api/request/", 
+				data: request,
+				success: function (data) {  
+					//console.log(request);
+					console.log("conversationId : "+conversationId);
+					console.log
+					if ("30000" != data.ResultCode) {
+					//	console.log(data);
+						alert(data.ResultCode + ":" + data.ResultMessage);
+					}
+					else{
+						//alert(conversationId);
+						alert("정상적으로 처리되었습니다.");
+					}
+				}, 
+				error: function (error) { //error 처리 
+					alert(data); 
+				} 
+			});
+			
+		}
+		//IE인지 확인
+		function isIE() {
+			return (navigator.appName === 'Netscape' && navigator.userAgent.search('Trident') !== -1) ||
+				navigator.userAgent.toLowerCase().indexOf("msie") !== -1;
+		}
+		function dti_preview(){ //미리보기
+			if(isIE()){
+				dti_preview_IE();
+			}
+			else{
+				alert("익스플로러에서만 동작구현되었습니다.");
+				//dti_preview_Chrome();
+			}
+		}
+		function dti_preview_IE(){ //익스 미리보기
+			
+			var _today = new Date();
+			var now = _today.format("YYYYMMDDhhmmss");
+			//console.log(_today.format('YYYYMMDDhhmmss'));
+			var DTI_WDATE = $("#DTI_WDATE").val().split("-").join("");//기입된 작성일자(YYYYMMdd)
+			var sbcode = "41000008";
+			var ISSUEID = DTI_WDATE+sbcode+$('#com_link_code').val()+$('#issue_seq').val();
+			var dtixml = "";
+			
+			//var SUP_COM_REGNO = $('#SUP_COM_REGNO').val();
+			// BYR_COM_REGNO = $('#BYR_COM_REGNO').val();
+			
+			dtixml = ''
+			+ '<?xml version="1.0" encoding="UTF-8"?>'
+			+ '<TaxInvoice xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:kr:or:kec:standard:Tax:ReusableAggregateBusinessInformationEntitySchemaModule:1:0" xsi:schemaLocation="urn:kr:or:kec:standard:Tax:ReusableAggregateBusinessInformationEntitySchemaModule:1:0 http://www.kec.or.kr/standard/Tax/TaxInvoiceSchemaModule_1.0.xsd">'
+			+ '<ExchangedDocument>'
+			+ '<IssueDateTime>'
+			+ now
+			+ '</IssueDateTime>'
+			+ '</ExchangedDocument>'
+			
+			+ '<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">'
+			+ '<ds:SignedInfo>'
+			+ '<ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>'
+			+ '<ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>'
+			+ '<ds:Reference URI="">'
+			+ '<ds:Transforms>'
+			+ '<ds:Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>'
+			+ '<ds:Transform Algorithm="http://www.w3.org/TR/1999/REC-xpath-19991116">'
+			+ '<ds:XPath>'
+			+ 'not(self::*[name()="TaxInvoice"] | ancestor-or-self::*[name()="ExchangedDocument"] | ancestor-or-self::ds:Signature)'
+			+ '</ds:XPath>'
+			+ '</ds:Transform>'
+			+ '</ds:Transforms>'
+			+ '<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>'
+			+ '<ds:DigestValue>'
+			+ '</ds:DigestValue>'
+			+ '</ds:Reference>'
+			+ '</ds:SignedInfo>'
+			+ '<ds:SignatureValue>'
+			+ '</ds:SignatureValue>'
+			+ '<ds:KeyInfo>'
+			+ '<ds:X509Data>'
+			+ '<ds:X509Certificate>'
+			+ '</ds:X509Certificate>'
+			+ '</ds:X509Data>'
+			+ '</ds:KeyInfo>'
+			+ '</ds:Signature>'
+			
+			+ '<TaxInvoiceDocument>'
+			+ '<IssueID>'
+			+ ISSUEID
+			+ '</IssueID>'
+			+ '<TypeCode>'
+			+ '0101'
+			+ '</TypeCode>'
+			+ '<DescriptionText/>'
+			+ '<IssueDateTime>'
+			+ now
+			+ '</IssueDateTime>'
+			+ '<PurposeCode>'
+			+ '02'
+			+ '</PurposeCode>'
+			+ '</TaxInvoiceDocument>'
+			+ '<TaxInvoiceTradeSettlement>'
+			+ '<InvoicerParty>'
+			+ '<ID>'
+			+ $('#SUP_COM_REGNO').val()
+			+ '</ID>'
+			+ '<TypeCode/>'
+			+ '<NameText>'
+			+ $('#SUP_COM_NAME').val()
+			+ '</NameText>'
+			+ '<ClassificationCode/>'
+			+ '<SpecifiedPerson>'
+			+ '<NameText>'
+			+ $('#SUP_REP_NAME').val()
+			+ '</NameText>'
+			+ '</SpecifiedPerson>'
+			+ '<DefinedContact>'
+			+ '<DepartmentNameText/>'
+			+ '<PersonNameText/>'
+			+ '<TelephoneCommunication/>'
+			+ '<URICommunication/>'
+			+ '</DefinedContact>'
+			+ '<SpecifiedAddress>'
+			+ '<LineOneText>'
+			+ $('#SUP_COM_ADDR').val()
+			+ '</LineOneText>'
+			+ '</SpecifiedAddress>'
+			+ '</InvoicerParty>'
+			+ '<InvoiceeParty>'
+			+ '<ID>'
+			+ $('#BYR_COM_REGNO').val()
+			+ '</ID>'
+			+ '<TypeCode/>'
+			+ '<NameText>'
+			+ $('#BYR_COM_NAME').val()
+			+ '</NameText>'
+			+ '<ClassificationCode/>'
+			+ '<SpecifiedOrganization>'
+			+ '<BusinessTypeCode>'
+			+ '01'
+			+ '</BusinessTypeCode>'
+			+ '</SpecifiedOrganization>'
+			+ '<SpecifiedPerson>'
+			+ '<NameText>'
+			+ $('#BYR_REP_NAME').val()
+			+ '</NameText>'
+			+ '</SpecifiedPerson>'
+			+ '<PrimaryDefinedContact>'
+			+ '<DepartmentNameText/>'
+			+ '<PersonNameText>'
+			+ 'j공급받는자'
+			+ '</PersonNameText>'
+			+ '<TelephoneCommunication>'
+			+ '02-519-3130'
+			+ '</TelephoneCommunication>'
+			+ '<URICommunication>'
+			+ 'jukury@businesson.co.kr'
+			+ '</URICommunication>'
+			+ '</PrimaryDefinedContact>'
+			+ '<SpecifiedAddress>'
+			+ '<LineOneText>'
+			+ $('#BYR_COM_ADDR').val()
+			+ '</LineOneText>'
+			+ '</SpecifiedAddress>'
+			+ '</InvoiceeParty>'
+			+ '<SpecifiedPaymentMeans>'
+			+ '<TypeCode>'
+			+ '10'
+			+ '</TypeCode>'
+			+ '<PaidAmount>'
+			+ $("#TOTAL_AMOUNT").val()
+			+ '</PaidAmount>'
+			+ '</SpecifiedPaymentMeans>'
+			+ '<SpecifiedPaymentMeans>'
+			+ '<TypeCode>'
+			+ '20'
+			+ '</TypeCode>'
+			+ '<PaidAmount>'
+			+ '0'
+			+ '</PaidAmount>'
+			+ '</SpecifiedPaymentMeans>'
+			+ '<SpecifiedPaymentMeans>'
+			+ '<TypeCode>'
+			+ '30'
+			+ '</TypeCode>'
+			+ '<PaidAmount>'
+			+ '0'
+			+ '</PaidAmount>'
+			+ '</SpecifiedPaymentMeans>'
+			+ '<SpecifiedPaymentMeans>'
+			+ '<TypeCode>'
+			+ '40'
+			+ '</TypeCode>'
+			+ '<PaidAmount>'
+			+ '0'
+			+ '</PaidAmount>'
+			+ '</SpecifiedPaymentMeans>'
+			+ '<SpecifiedMonetarySummation>'
+			+ '<ChargeTotalAmount>'
+			+ $("#SUP_AMOUNT").val()
+			+ '</ChargeTotalAmount>'
+			+ '<TaxTotalAmount>'
+			+ $("#TAX_AMOUNT").val()
+			+ '</TaxTotalAmount>'
+			+ '<GrandTotalAmount>'
+			+ $("#TOTAL_AMOUNT").val()
+			+ '</GrandTotalAmount>'
+			+ '</SpecifiedMonetarySummation>'
+			+ '</TaxInvoiceTradeSettlement>'
+			;
+			$('.data_item').each(function(index){
+				dtixml += ''
+				+ '<TaxInvoiceTradeLineItem>'
+				+ 	'<SequenceNumeric>'	//일련번호
+				+ 		(index+1)
+				+ 	'</SequenceNumeric>'
+				+ 	'<DescriptionText>'	//비고
+				+ 		$(this).find(".ITEM_CODE input").val()
+				+ 	'</DescriptionText>'
+				+ 	'<InvoiceAmount>'	//아이템 공급가액
+				+ 		$(this).find(".SUP_AMOUNT input").val()
+				+ 	'</InvoiceAmount>'
+				+ 	'<ChargeableUnitQuantity>'//아이템 갯수
+				+ 		$(this).find(".ITEM_QTY input").val()
+				+ 	'</ChargeableUnitQuantity>'
+				+ 	'<InformationText>'
+				+ 		$(this).find(".ITEM_SIZE input").val()
+				+ 	'</InformationText>'
+				+ 	'<NameText>'
+				+ 		$(this).find(".ITEM_NAME input").val()
+				+ 	'</NameText>'
+				+ 	'<PurchaseExpiryDateTime>'
+				+ 		$(this).find(".ITEM_MD input").val().split("-").join("")//기입된 작성일자(YYYYMMdd)
+				+ 	'</PurchaseExpiryDateTime>'
+				+ 	'<TotalTax>'
+				+ 		'<CalculatedAmount>'
+				+ 			$(this).find(".TAX_AMOUNT input").val()
+				+ 		'</CalculatedAmount>'
+				+ 	'</TotalTax>'
+				+ 	'<UnitPrice>'
+				+ 	'<UnitAmount>'
+				+ 		$(this).find(".UNIT_PRICE input").val()
+				+ 	'</UnitAmount>'
+				+ 	'</UnitPrice>'
+				+ '</TaxInvoiceTradeLineItem>'
+			});
+			dtixml += '</TaxInvoice>';
+						
+			var request = JSON.stringify({ 
+				//'MessageId': $("#messageId").val(), 
+				'MessageId': 'aehoafndlaohelapehpf217301709spjp',
+				'Signal': 'PREVIEW_FORM', //고정
+				'RequestTime': now,
+				'SendComRegno': $('#SUP_COM_REGNO').val(),
+				'AuthToken': $("#AUTH_TICKET").val(), 
+				'SystemType': 'OAPI',
+				'ServiceCode': 'DTI',
+				//'ConversationId': [$("#CONVERSATION_ID").val()],//참조번호
+				//'StatusSignal': $("#Signal").val(),
+				//'StatusReason': $("#Reason").val()
+				}); 
+				
+				$.support.cors = true;
+			
+				$.ajax({ 
+					type: "POST",
+					dataType: "json", 
+					crossDomain: true,
+					contentType: "application/json",
+					url: "http://"+$(':radio[name="SERVER_TYPE"]').filter(':checked').val()+"api.smartbill.co.kr/sb-api/request/", 
+					data: request,
+					success: function (data) {  
+	
+						if ("30000" != data.ResultCode) {
+							alert(data.ResultCode + ":" + data.ResultMessage);
+						}
+						else{
+							alert("정상적으로 처리되었습니다.");
+							console.log(data);
+							totalCount = data.ResultDataSet.Table1.length;
+							if(0 < totalCount){
+							 data.ResultDataSet.Table1[0].CONTENT; //공급받는자용 매입 세금계산서
+							 data.ResultDataSet.Table1[1].CONTENT; //공급받는자용 매입 계산서
+							 data.ResultDataSet.Table1[2].CONTENT; //공급받는자용 위수탁 매입 세금계산서
+							 data.ResultDataSet.Table1[3].CONTENT; //공급받는자용 위수탁 매입 계산서
+							 data.ResultDataSet.Table1[4].CONTENT; //공급자용 매출 세금계산서
+							 data.ResultDataSet.Table1[5].CONTENT; //공급자용 매출 계산서
+							 data.ResultDataSet.Table1[6].CONTENT; //공급자용 위수탁 매출 세금계산서
+							 data.ResultDataSet.Table1[7].CONTENT; //공급자용 위수탁 매출 계산서
+							 data.ResultDataSet.Table1[8].CONTENT; //거래명세서(과세)
+							 data.ResultDataSet.Table1[9].CONTENT; //거래명세서(면세)
+							 data.ResultDataSet.Table1[10].CONTENT; //위수탁 거래명세서(과세)
+							 data.ResultDataSet.Table1[11].CONTENT; //위수탁 거래명세서(면세)
+							
+							// IE 브라우저
+												//XML원본파일을 미리보기양식으로 변환
+							var signedXML; //원본XML을 할당하는 변수 
+							var viewForm;  //미리보기 양식을 할당하는 변수 
+							var xml = new ActiveXObject("Microsoft.XMLDOM"); 
+							xml.async = false; 
+							xml.loadXML(dtixml); 
+							var xsl = new ActiveXObject("Microsoft.XMLDOM"); 
+							xsl.async = false;
+							//if(arapStr[0] == "매입"){
+								xsl.loadXML(data.ResultDataSet.Table1[4].CONTENT); //세금계산서
+							//	//xsl.loadXML(data.ResultDataSet.Table1[8].CONTENT); //거래명세서
+							//} else {
+							//	xsl.loadXML(data.ResultDataSet.Table1[4].CONTENT); //세금계산서
+							//	//xsl.loadXML(data.ResultDataSet.Table1[8].CONTENT); //거래명세서
+							//}
+							xmlTrans = xml.transformNode(xsl);
+
+							//document.getElementById("view1").innerHTML = data.ResultDataSet.Table1[0].CONTENT;
+							
+							//새탭 띄우기
+							window.open('', 'DTIviewer');
+							//POST전송을위한 FORM생성
+								
+							var viewForm = document.createElement("form");
+							viewForm.setAttribute("method", "post");
+							viewForm.setAttribute("target", "DTIviewer");
+							viewForm.setAttribute("action", "viewDTI.asp");
+							var hiddenField1 = document.createElement("input");
+							hiddenField1.setAttribute("type", "hidden");
+							hiddenField1.setAttribute("name", "xmlFile1");
+							hiddenField1.setAttribute("value", xmlTrans); 
+							viewForm.appendChild(hiddenField1); 
+							document.body.appendChild(viewForm);
+							viewForm.submit();
+							
+							// IE 이외 브라우저
+							
+							//var parser = new DOMParser();
+							//var xml = parser.parseFromString(dtixml, "text/xml");
+							//var xsl = parser.parseFromString(data.ResultDataSet.Table1[4].CONTENT, "text/xml");
+							//var xsltProcessor = new XSLTProcessor();
+							//xsltProcessor.importStylesheet(xsl);
+							//var res = xsltProcessor.transformToFragment(xml, document);
+							//console.log(xml);
+							//console.log(xsl);
+							
+							//document.getElementById("VIEW").appendChild(res);
+							
+							}
+							else{
+							 alert("데이터가 존재하지 않습니다.");
+							}
+						}
+					}, 
+					error: function (error) { //error 처리 
+						alert(data); 
+					} 
+				});
+				
+			
+		}
+			
+			
+			/*
+				날짜포맷 
+				사용예시
+				var _today = new Date();
+				console.log(_today.format('YYYY-MM-DD'));
+				console.log(_today.format('HH:mm:ss'));
+				console.log(_today.format('YYYY-MM-DD(KS) HH:mm:ss'));
+				console.log(_today.format('YYYY-MM-DD a/p hh:mm:ss'));
+			*/
+			Date.prototype.format = function (f) {
+				if (!this.valueOf()) return " ";
+				var weekKorName = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
+				var weekKorShortName = ["일", "월", "화", "수", "목", "금", "토"];
+				var weekEngName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+				var weekEngShortName = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+				var d = this;
+
+					return f.replace(/(YYYY|YY|MM|DD|KS|KL|ES|EL|HH|hh|mm|ss|a\/p)/gi, function ($1) {
+						switch ($1) {
+							case "YYYY": return d.getFullYear(); // 년 (4자리)
+							case "YY": return (d.getFullYear() % 1000).zf(2); // 년 (2자리)
+							case "MM": return (d.getMonth() + 1).zf(2); // 월 (2자리)
+							case "DD": return d.getDate().zf(2); // 일 (2자리)
+							case "KS": return weekKorShortName[d.getDay()]; // 요일 (짧은 한글)
+							case "KL": return weekKorName[d.getDay()]; // 요일 (긴 한글)
+							case "ES": return weekEngShortName[d.getDay()]; // 요일 (짧은 영어)
+							case "EL": return weekEngName[d.getDay()]; // 요일 (긴 영어)
+							case "HH": return d.getHours().zf(2); // 시간 (24시간 기준, 2자리)
+							case "hh": return ((h = d.getHours() % 12) ? h : 12).zf(2); // 시간 (12시간 기준, 2자리)
+							case "mm": return d.getMinutes().zf(2); // 분 (2자리)
+							case "ss": return d.getSeconds().zf(2); // 초 (2자리)
+							case "a/p": return d.getHours() < 12 ? "오전" : "오후"; // 오전/오후 구분
+							default: return $1;
+						}
+					});
+				};
+				String.prototype.string = function (len) { var s = '', i = 0; while (i++ < len) { s += this; } return s; };
+				String.prototype.zf = function (len) { return "0".string(len - this.length) + this; };
+				Number.prototype.zf = function (len) { return this.toString().zf(len); };
+			
+			
+			function changeItemDataHandler() {
+				$(this).val($(this).val().replace(/[^0-9]/g,""));
+				//console.log($(this).parents('tr'));
+				var item=$(this).parent().parent();
+				//console.log(item);
+				var unit_price_v = item.children('td.UNIT_PRICE').children('input').val();
+				var item_qty_v = item.children('td.ITEM_QTY').children('input').val();
+				//console.log(unit_price_v);
+				//console.log(item_qty_v);
+				var sup_amount_v = unit_price_v * item_qty_v;
+				var tax_amount_v = 0;
+				if($(':radio[name="DTI_TYPE"]').filter(':checked').val() == "0101")
+					tax_amount_v = sup_amount_v/10;
+				item.children('td.SUP_AMOUNT').children('input').val(sup_amount_v);
+				item.children('td.TAX_AMOUNT').children('input').val(tax_amount_v);
+				
+				sup_amount_v = 0;
+				tax_amount_v = 0;
+				var sup_amout_v_sum = 0;
+				var tax_amout_v_sum = 0;
+				
+				 $('td.SUP_AMOUNT input').each(function(index){
+								sup_amount_v =$(this).val();
+								sup_amount_v *=1;
+								sup_amout_v_sum += sup_amount_v;
+								//console.log("sup: " + sup_amount_v);
+						});
+				if($(':radio[name="DTI_TYPE"]').filter(':checked').val() == "0101"){
+					 $('td.TAX_AMOUNT input').each(function(index){
+									tax_amount_v =$(this).val();
+									tax_amount_v *=1;
+									tax_amout_v_sum += tax_amount_v;
+									//console.log("tex: " + tax_amount_v);
+							});
+					}
+				//console.log(total_amout_v);
+				$("#SUP_AMOUNT").val(sup_amout_v_sum);
+				$("#TAX_AMOUNT").val(tax_amout_v_sum);
+				$("#TOTAL_AMOUNT").val(sup_amout_v_sum+tax_amout_v_sum);
+				//console.log(sup_amount_v);
+				//$(this).parent().find('SUP_AMOUNT').val('0');
+				//$(this).nextAll(['SUP_AMOUNT']).val('0');
+			}
+			function addItem(){
+				//console.log("test: "+price);
+				var _today = new Date();
+				var itemDataCode="";
+				itemDataCode += "<tr onClick='lowSelect(this)'; class='data_item'>"
+				itemDataCode +=	"<td class='delete_btn'><button>-</button></td>"
+				itemDataCode +=	"<td class='ITEM_CODE'><input class='ITEM_CODE' maxlength='50' value=''></td>"
+				itemDataCode +=	"<td class='ITEM_NAME'><input class='ITEM_NAME' maxlength='100' value=''></td>"
+				itemDataCode +=	"<td class='ITEM_SIZE'><input class='ITEM_SIZE' maxlength='60' value=''></td>"
+				itemDataCode +=	"<td class='ITEM_MD'><input type='date' class='ITEM_MD' maxlength='18' value='"+_today.format('YYYY-MM-DD')+"'></td>"
+				itemDataCode +=	"<td class='UNIT_PRICE in'><input class='price UNIT_PRICE' maxlength='18' type='text' value='0'></td>"
+				itemDataCode +=	"<td class='ITEM_QTY in'><input class='price ITEM_QTY' maxlength='18' type='text' value='0'></td>"
+				itemDataCode +=	"<td class='SUP_AMOUNT'><input class='SUP_AMOUNT' value='0' type='text' disabled></td>"
+				itemDataCode +=	"<td class='TAX_AMOUNT'><input class='TAX_AMOUNT' value='0' type='text' disabled></td>"
+				itemDataCode += "</tr>"
+				$('#sum_amount').before(itemDataCode);
+				//$('#item_body').append(itemDataCode);
+				$('#sum_amount').prev("tr").find("td button").on("click",deleteItem);
+				$('#sum_amount').prev("tr").find("td.in input.price").on("keyup",changeItemDataHandler);
+			}
+			function deleteItem(){
+				if(($("tr.data_item").length)>1)
+						$(this).closest("tr.data_item").remove();
+				else alert("아이템 한 개는 필수입니다.");
+			}
+			
+			function firstItemAdd(){
+				addItem();
+				$('#sum_amount').prev("tr").find("td.ITEM_CODE input").val('WD01');
+				$('#sum_amount').prev("tr").find("td.ITEM_NAME input").val('품목');
+				$('#sum_amount').prev("tr").find("td.ITEM_SIZE input").val('10inch');
+				$('#sum_amount').prev("tr").find("td.UNIT_PRICE input").val(5000);
+				$('#sum_amount').prev("tr").find("td.ITEM_QTY input").val(1);
+				$('#sum_amount').prev("tr").find("td.ITEM_QTY input").trigger('keyup');
+			}
+			//과세영세면세
+			$(':radio[name="DTI_TYPE"]').change(function() {
+				  var DTI_TYPE = $(this).filter(':checked').val();
+				  $(".price").trigger("keyup");
+				  //alert(DTI_TYPE);
+			});
+			
+			 $(window).load(function () {	
+				var _today = new Date();
+				$("#DTI_WDATE").val(_today.format('YYYY-MM-DD'));
+				firstItemAdd();
+			}
+			
+			
+			);
+	</SCRIPT>
+</body>
+</HTML>

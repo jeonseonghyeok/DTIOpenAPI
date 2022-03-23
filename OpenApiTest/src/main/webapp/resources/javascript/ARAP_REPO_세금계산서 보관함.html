@@ -1,0 +1,235 @@
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<HTML>
+<HEAD>
+	<TITLE>보관함 조회</TITLE>
+	<!-- <OBJECT CLASSID="CLSID:4731A687-7D96-4614-9363-089E4CEF763A" height="0" id="Prop" name="dti" width="0" VIEWASTEXT>
+	</OBJECT> -->
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script> 
+<script language="javascript">
+
+	var resultData;
+	var resultXML = new Array();
+	/*
+		날짜포맷 
+		사용예시
+		var today = new Date();
+		console.log(today.format('YYYY-MM-DD'));
+		console.log(today.format('HH:mm:ss'));
+		console.log(today.format('YYYY-MM-DD(KS) HH:mm:ss'));
+		console.log(today.format('YYYY-MM-DD a/p hh:mm:ss'));
+	*/
+	Date.prototype.format = function (f) {
+		if (!this.valueOf()) return " ";
+		var weekKorName = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
+		var weekKorShortName = ["일", "월", "화", "수", "목", "금", "토"];
+		var weekEngName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+		var weekEngShortName = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+		var d = this;
+
+			return f.replace(/(YYYY|YY|MM|DD|KS|KL|ES|EL|HH|hh|mm|ss|a\/p)/gi, function ($1) {
+				switch ($1) {
+					case "YYYY": return d.getFullYear(); // 년 (4자리)
+					case "YY": return (d.getFullYear() % 1000).zf(2); // 년 (2자리)
+					case "MM": return (d.getMonth() + 1).zf(2); // 월 (2자리)
+					case "DD": return d.getDate().zf(2); // 일 (2자리)
+					case "KS": return weekKorShortName[d.getDay()]; // 요일 (짧은 한글)
+					case "KL": return weekKorName[d.getDay()]; // 요일 (긴 한글)
+					case "ES": return weekEngShortName[d.getDay()]; // 요일 (짧은 영어)
+					case "EL": return weekEngName[d.getDay()]; // 요일 (긴 영어)
+					case "HH": return d.getHours().zf(2); // 시간 (24시간 기준, 2자리)
+					case "hh": return ((h = d.getHours() % 12) ? h : 12).zf(2); // 시간 (12시간 기준, 2자리)
+					case "mm": return d.getMinutes().zf(2); // 분 (2자리)
+					case "ss": return d.getSeconds().zf(2); // 초 (2자리)
+					case "a/p": return d.getHours() < 12 ? "오전" : "오후"; // 오전/오후 구분
+					default: return $1;
+				}
+			});
+		};
+	String.prototype.string = function (len) { var s = '', i = 0; while (i++ < len) { s += this; } return s; };
+	String.prototype.zf = function (len) { return "0".string(len - this.length) + this; };
+	Number.prototype.zf = function (len) { return this.toString().zf(len); };
+
+	$(window).load(function () {	
+		var today = new Date();
+		var lastWeek = new Date();
+		lastWeek.setDate(today.getDate()-7);
+		$("#SearchFromDate").val(lastWeek.format('YYYY-MM-DD'));
+		$("#SearchToDate").val(today.format('YYYY-MM-DD'));		
+	});
+	
+	function ARAP_REPO(){ //보관함 조회
+		var _now = new Date();
+		var now = _now.format("YYYYMMDDhhmmss");
+		$('#MessageId').val('OpenAPITest-ARAP_REPO-'+now);
+		var request = JSON.stringify({ 
+			'MessageId': $('#MessageId').val(),
+			'Signal': 'ARAP_REPO',
+			'RequestTime': now,
+			'SendComRegno': $('#SendComRegno').val(),
+			'AuthToken': $("#AuthToken").val(),
+			'ServiceCode': 'DTI',
+			'SearchFromDate': $("#SearchFromDate").val(),
+			'SearchToDate': $("#SearchToDate").val(),
+			'SearchComRegno': '',
+			'RepoTypeCode': 'AR'
+		}); 
+		$.support.cors = true;
+		
+		$.ajax({ 
+			type: "POST",
+			dataType: "json", 
+			crossDomain: true,
+			contentType: "application/json",
+			url: "http://demoapi.smartbill.co.kr/sb-api/request/", 
+			data: request,
+			success: function (result) {  
+				fnGetData(result); //result 처리
+			}, 
+			error: function (error) { //error 처리 
+				alert(data); 
+			} 
+		});
+		
+	}
+
+
+
+
+	function fnGetData(data){
+
+		if ("30000" != data.ResultCode) {
+			alert(data.ResultCode + ":" + data.ResultMessage);
+		}
+		else{
+			resultData=data.ResultDataSet.Table;
+			alert("조회 건 수 :"+resultData.length);
+			
+			$('#searchResult_list').val("");
+			if(resultData.length<1){
+				var option = $('<option value="">데이터가 존재하지 않습니다.</option>');
+				$('#searchResult_list').append(option);
+			}
+			else{
+				for( var i=0; i<resultData.length; i++){
+					resultXML[i] = resultData[i].DATAXML;
+					resultData[i].DATAXML=undefined;
+					
+					resultData[i].ISSUE_ID;       //세금계산서 상태값
+					var option = $("<option value='"+resultData[i].ETC_PCS_NO+"'>"+resultData[i].ETC_PCS_NO+"</option>");
+					$('#searchResult_list').append(option);
+				}
+			}
+			
+		}
+	}
+	function viewJSON(){ //JSON 데이터(xml내용은 제거) 조회
+		var selectedConversation_id = $("#searchResult_list").val();
+		console.log(selectedConversation_id);
+		for( var i=0; i<resultData.length; i++){
+			if(resultData[i].ETC_PCS_NO == selectedConversation_id){
+				$('#RARISSUE_Target').val(selectedConversation_id);
+				$('#resultDetail').val(JSON.stringify(resultData[i]).replaceAll(',',',\n'));
+				$('#RARISSUE_Form').show();
+				alert("조회에 성공하였습니다.");
+				break;
+			}
+		}
+	}
+	function viewXML(){ //XML 데이터 조회
+		var selectedConversation_id = $("#searchResult_list").val();
+		console.log(selectedConversation_id);
+		for( var i=0; i<resultData.length; i++){
+			if(resultData[i].ETC_PCS_NO == selectedConversation_id){
+				$('#RARISSUE_Target').val(selectedConversation_id);
+				$("#resultDetail").val(resultXML[i].replaceAll('>','>\n').replaceAll('<','\n<').replaceAll('\n\n','\n'));
+				$('#RARISSUE_Form').show();
+				alert("조회에 성공하였습니다.");
+				break;
+			}
+		}
+	}
+	
+</SCRIPT>	
+	</HEAD>
+	<body>
+	
+	<h2 align = "center"> 보관함 조회 </h2>
+	<hr>
+	<div style="width: 50%; float: left;">
+		<div style="width: 90%; height: 200px; padding: 10px; border: 1px solid green; float: left;">
+			<table style="width: 90%;">
+				<tr>
+					<th>항목</th>
+					<th style="width: 80%;">속성 값</th>
+				</tr>
+				
+				<tr>
+					<td>메세지ID</td>
+					<td><input id='MessageId' maxlength='100' style="width: 90%;" disabled></td>
+				</tr>
+				<tr>
+					<td>송신 사업자번호</td>
+					<td><input id='SendComRegno' maxlength='13' value='5460410824'></td>
+				</tr>
+				<tr>
+					<td>토큰</td>
+					<td><input id='AuthToken' maxlength='100' style="width: 90%;" value='QXN3K05KZ2ZCQVlxeC9ULzRpY3RwSHZsYW1BRUltWUxjZ3ZLeXQ3MTlIOD0K'></td>
+				</tr>
+				<tr>
+					<td>검색 시작 일</td>
+					<td><input type='date' id='SearchFromDate' maxlength='10' value=''></td>
+				</tr>
+				<tr>
+					<td>검색 종료 일</td>
+					<td><input type='date' id='SearchToDate' maxlength='10' value=''></td>
+				</tr>
+				<tr>			
+					<td><input type = "button" name = "Test" size="50" value = "보관함 조회" onClick = "ARAP_REPO()"></td>			
+				</tr>
+						
+			</table>
+		</div>
+		<div style="width: 90%; height: 60%; margin-top:8px; padding: 10px; border: 1px solid green; float: left;">
+			<select id='searchResult_list' style="width: 90%";>
+				<option value="">조회 후 선택 가능합니다.</option>
+			</select>
+			</br></br>
+			<button onclick="viewJSON()">정보보기</button>
+			<button onclick="viewXML()">xml원본보기</button>
+			</br></br>
+			 <textarea id="resultDetail" style="width: 90%;height:70%;"></textarea>
+			 </br></br>
+			
+		</div>
+	 </div>
+	 <div style="width: 50%; float: left;">
+	 <table id='RARISSUE_Form' style='display: none; width: 90%; border: 1px solid green;'>
+			<tr>
+				<th style="width: 10%;">항목</th>
+				<th style="width: 30%;">속성 값</th>
+				<th style="width: 10%;"></th>
+				<th style="width: 30%;"></th>
+			</tr>
+			<tr>
+				<td>참조번호</td>
+				<td><input id='RARISSUE_Target' maxlength='100' style="width: 100%;" disabled></td>
+			</tr>
+			<tr>
+				<td>비밀번호</td>
+				<td>
+					<input id='CertPassword' maxlength='100' style="width: 100%;" value="6tVnMtI7GhHX4P9scDgmhw==">
+				</td>
+			</tr>
+			<tr>
+				<td>메세지ID</td>
+				<td><input id='RARISSUE_MessageId' maxlength='100' style="width: 100%;" disabled></td>
+			</tr>
+			<tr>
+				<td><button onclick="RARISSUE()" style='display: none;'>역발행</button></td>
+				<td>
+				</td>
+			</tr>
+		</table>
+	 </div>
+	</body>
+</HTML>

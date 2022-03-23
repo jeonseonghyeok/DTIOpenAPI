@@ -1,0 +1,56 @@
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<HTML>
+<HEAD>
+<TITLE>텍스트 중복 제거</TITLE>
+<!-- <OBJECT CLASSID="CLSID:4731A687-7D96-4614-9363-089E4CEF763A" height="0" id="Prop" name="dti" width="0" VIEWASTEXT>
+	</OBJECT> -->
+<script type="text/javascript"
+	src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script language="javascript">
+	/**
+	 * 문자열 중복제거 함수 
+	 */
+	function RemoveDuplicates() {
+		var text_total = $('#origin').val();
+		var textArr = text_total.split('\n');
+		var final_data = [];
+		var resultText = "";
+
+		$.each(textArr, function(i, value) {
+			if (final_data.indexOf(value) == -1)
+				final_data.push(value);
+		});
+
+		$.each(final_data, function(i, value) {
+			resultText += value;
+			resultText += "\n";
+		});
+		$('#result').val(resultText);
+		alert(	"입력 문자열 " + textArr.length + "행 중 \n"+
+				"중복 문자열 " +(textArr.length-final_data.length) + "행 제거\n" + 
+				"결과 문자열 " + final_data.length + "행");
+	}
+</SCRIPT>
+</HEAD>
+<body>
+
+	<h2 align="center">텍스트 중복 제거</h2>
+	<hr>
+	<div
+		style="width: 40%; height: 800px; margin: 10px; padding: 5px; border: 1px solid green; float: left;">
+		<h3 style="text-align: center;">기존</h3>
+		<textarea id="origin" style="width: 100%; height: 700px;"></textarea>
+
+		<input type="button" name="Test" size="50" value="문자열 중복 제거"
+			onClick="RemoveDuplicates()">
+	</div>
+	<div
+		style="width: 40%; height: 800px; margin: 10px; padding: 5px; border: 1px solid green; float: left;">
+		<h3 style="text-align: center;">수정</h3>
+		<textarea id="result" style="width: 100%; height: 700px;"></textarea>
+
+	</div>
+
+
+</body>
+</HTML>
